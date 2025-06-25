@@ -11,12 +11,14 @@ import { routes } from './Route/route.js';
 
 const app = express();
 app.use(express.json({ limit: '5mb' }))
+
 app.use(
   cors({
     origin: '*',
+   
   })
 );
-connection()
+// connection()
 
 routes(app);
 app.use(error);

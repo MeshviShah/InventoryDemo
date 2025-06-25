@@ -1,4 +1,3 @@
-
 const buildQueryOptions = ({
   page = 1,
   limit = 10,
@@ -13,12 +12,16 @@ const buildQueryOptions = ({
   const parsedOrder = ['asc', 'desc'].includes(order.toLowerCase()) ? order.toLowerCase() : 'desc';
 
   const skip = (parsedPage - 1) * parsedLimit;
-
   const query = {};
 
-  // 1. Handle filters
+  // Filters
   for (const [key, value] of Object.entries(filters)) {
-    if (value !== undefined && value !== null && value !== '') {
+    if (
+      value !== undefined &&
+      value !== null &&
+      value !== '' &&
+      (!Array.isArray(value) || value.length > 0)
+    ) {
       if (Array.isArray(value)) {
         query[key] = { $in: value };
       } else {
@@ -27,18 +30,17 @@ const buildQueryOptions = ({
     }
   }
 
-  // 2. Handle search
+  // Search
   if (search && searchFields.length > 0) {
     query.$or = searchFields.map((field) => ({
       [field]: { $regex: search.trim(), $options: 'i' }
     }));
   }
 
-  // 3. Sort
   const sortBy = { [sort]: parsedOrder === 'asc' ? 1 : -1 };
 
   return {
-    query, 
+    query,
     options: {
       limit: parsedLimit,
       skip,
@@ -48,5 +50,6 @@ const buildQueryOptions = ({
     limit: parsedLimit
   };
 };
+
 
 export {buildQueryOptions};

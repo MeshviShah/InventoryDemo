@@ -4,7 +4,8 @@ import express from 'express';
 import {
   createProduct,
   getProducts,
-  deleteProduct
+  deleteProduct,
+  productCategoryDropdown
 } from '../Controller/index.js';
 import { validate, validateCreateProduct, validateDeleteProduct } from '../Validation/index.js';
 
@@ -18,5 +19,8 @@ productRoute.get('/', getProducts);
 
 // Soft delete a product by ID
 productRoute.delete('/:id',validateDeleteProduct, deleteProduct);
+
+//category dropdown list
+productRoute.get('/category',productCategoryDropdown)
 
 export  {productRoute};

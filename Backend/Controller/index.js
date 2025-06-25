@@ -1,1 +1,1 @@
-export {createProduct,getProducts,deleteProduct} from './product.controller.js';
+export {createProduct,getProducts,deleteProduct,productCategoryDropdown} from './product.controller.js';

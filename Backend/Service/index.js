@@ -1,1 +1,1 @@
-export {createProductService,deleteProductService,getAllProductService} from './product.service.js';
+export {createProductService,deleteProductService,getAllProductService,getProductCategoriesService} from './product.service.js';

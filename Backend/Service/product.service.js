@@ -3,14 +3,13 @@ import mongoose from 'mongoose';
 import { messages } from '../Util/message.util.js';
 import { buildQueryOptions } from '../Util/queryBuilder.util.js';
 
-/**
- * Create a new product
- */
+//create product service
 export const createProductService = async (body) => {
   const { name, description, quantity, categories } = body;
 
   // Check if product name already exists
-  const existingProduct = await Product.findOne({ name: name.trim() });
+  const existingProduct = await Product.findOne({ name: name.trim(), deletedAt: null });
+  console.log(existingProduct)
   if (existingProduct) {
     throw {
       statusCode: 409,
@@ -37,21 +36,31 @@ export const createProductService = async (body) => {
   return product;
 };
 
-/**
- * Get paginated and filtered products
- */
-export const getAllProductService = async ({ page = 1, limit = 10, search = '', categories = [] }) => {
-  const { query, options } = buildQueryOptions({
+//get all product service
+export const getAllProductService = async ({
+  page = 1,
+  limit = 10,
+  search = '',
+  categories = ''
+}) => {
+  // Convert categories to array
+  const categoryArray =
+    typeof categories === 'string'
+      ? categories.split(',').map((c) => c.trim()).filter(Boolean)
+      : Array.isArray(categories)
+        ? categories
+        : [];
+
+  const { query, options, page: parsedPage, limit: parsedLimit } = buildQueryOptions({
     page,
     limit,
     sort: 'createdAt',
     order: 'desc',
-    filters: { categories },
+    filters: { categories: categoryArray },
     search,
     searchFields: ['name']
   });
-
-  query.deletedAt = null;
+query.deletedAt = null;
 
   const [products, total] = await Promise.all([
     Product.find(query)
@@ -66,9 +75,9 @@ export const getAllProductService = async ({ page = 1, limit = 10, search = '', 
   return {
     data: products,
     total,
-    page: options.page,
-    limit: options.limit,
-    pages: Math.ceil(total / options.limit)
+    page: parsedPage,
+    limit: parsedLimit,
+    pages: Math.ceil(total / parsedLimit)
   };
 };
 
@@ -92,4 +101,13 @@ export const deleteProductService = async (id) => {
 
   return { message: messages.product.DELETED };
 
+};
+
+//fetch category for deopdown
+export const getProductCategoriesService = async () => {
+  const categories = await Category.find({ deletedAt: null })
+    .select('_id name') 
+    .sort({ name: 1 }); // Sort alphabetically by name
+
+  return categories;
 };

@@ -25,6 +25,9 @@ const messages = {
         FETCHED: 'Products fetched successfully',
         ALREADY_EXISTS: 'Product with this name already exists',
       },
+    category: {
+       FETCHED: 'Category fetched successfully',
+    }
      
 }
 export {messages}
