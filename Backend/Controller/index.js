@@ -1,0 +1,1 @@
+export {createProduct,getProducts,deleteProduct} from './product.controller.js';
